@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: nr-log-sender
+
+resources:
+  - k8s/namespace.yaml
+  - k8s/deployment.yaml
+
+# ConfigMap is generated straight from the real script + payload — single source
+# of truth. The name hash suffix makes `apply -k` roll the pod on any change.
+configMapGenerator:
+  - name: nr-log-sender-script
+    files:
+      - send-otlp-log.sh
+      - otlp-log.json

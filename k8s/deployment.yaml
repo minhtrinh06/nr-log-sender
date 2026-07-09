@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nr-log-sender
+  labels:
+    app: nr-log-sender
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nr-log-sender
+  template:
+    metadata:
+      labels:
+        app: nr-log-sender
+    spec:
+      containers:
+        - name: sender
+          image: curlimages/curl:8.11.1
+          # busybox sh runs the script (no bash in this image); shebang is ignored.
+          command: ["sh", "/scripts/send-otlp-log.sh"]
+          env:
+            # Fleet-managed OTel collector (pipeline-control-gateway); its
+            # logs/otlp pipeline forwards to https://otlp.nr-data.net with the
+            # license key, so none is mounted here.
+            - name: OTLP_ENDPOINT
+              value: "http://pipeline-control-gateway.newrelic.svc.cluster.local:4318/v1/logs"
+            - name: INTERVAL
+              value: "5"
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+      volumes:
+        - name: script
+          configMap:
+            name: nr-log-sender-script
+            defaultMode: 0755
