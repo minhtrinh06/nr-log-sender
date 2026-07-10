@@ -27,9 +27,14 @@ spec:
               value: "http://pipeline-control-gateway.newrelic.svc.cluster.local:4318/v1/logs"
             - name: INTERVAL
               value: "5"
+            - name: PAYLOAD_DIR
+              value: "/payloads"
           volumeMounts:
             - name: script
               mountPath: /scripts
+              readOnly: true
+            - name: payloads
+              mountPath: /payloads
               readOnly: true
           resources:
             requests:
@@ -42,3 +47,9 @@ spec:
           configMap:
             name: nr-log-sender-script
             defaultMode: 0755
+        # Built outside kustomize (kubectl --from-file=payloads/) so new files
+        # need no manifest edit; kubelet syncs the mounted volume in-place.
+        - name: payloads
+          configMap:
+            name: nr-log-sender-payloads
+            optional: true

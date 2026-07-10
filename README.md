@@ -1,10 +1,11 @@
 # nr-log-sender
 
-Sends a fixed test log to New Relic as an **OTLP/HTTP resourceLogs** payload, for
-exercising pipeline / parsing rules. The payload (`otlp-log.json`) is sent
-verbatim — empty resource/scope/record attributes, `severityText: DEBUG`, and the
-embedded `Body: {\"...\"}` JSON inside the body string — with only `timeUnixNano`
-refreshed per send.
+Sends test logs to New Relic as **OTLP/HTTP resourceLogs** payloads, for
+exercising pipeline / parsing rules. Every `*.json` file in `payloads/` is a log
+body; each sweep the sender splices each one into the `otlp-log.json` envelope
+(replacing the `"__BODY__"` marker) and POSTs it, refreshing only
+`timeUnixNano`. Envelope stays fixed: empty resource/scope/record attributes,
+`severityText: DEBUG`.
 
 It POSTs to the fleet-managed **pipeline-control-gateway** (an OTel collector,
 `newrelic` namespace), whose `logs/otlp` pipeline forwards to
@@ -16,11 +17,16 @@ sender pod ──OTLP/HTTP──▶ pipeline-control-gateway:4318 ──▶ otlp
 ```
 
 ## Files
-- `otlp-log.json` — the exact resourceLogs payload. Its example timestamp
-  (`1783492434407676000`) doubles as the substitution marker for `timeUnixNano`.
-- `send-otlp-log.sh` — the sender. Loops forever, one POST every `INTERVAL`
-  seconds. Runs under bash locally and busybox `sh` in-cluster.
-- `kustomization.yaml` — generates a ConfigMap from the script + payload, plus
+- `payloads/*.json` — one file per log body (the JSON `body` value of the log
+  record, e.g. `{"stringValue": "..."}`). One send per file per sweep.
+- `otlp-log.json` — the resourceLogs envelope. `"__BODY__"` marks where the
+  payload goes; the example timestamp (`1783492434407676000`) doubles as the
+  substitution marker for `timeUnixNano`.
+- `send-otlp-log.sh` — the sender. Loops forever, one sweep of all payloads
+  every `INTERVAL` seconds. Runs under bash locally and busybox `sh` in-cluster.
+- `deploy.sh` — applies everything: `apply -k` plus the payloads ConfigMap
+  (built from `payloads/`, since kustomize can't glob a directory).
+- `kustomization.yaml` — generates a ConfigMap from the script + envelope, plus
   the namespace + deployment.
 - `k8s/namespace.yaml`, `k8s/deployment.yaml` — the workload (`curlimages/curl`).
 
@@ -35,14 +41,20 @@ OTLP_ENDPOINT=http://$(sudo k3s kubectl -n newrelic get svc pipeline-control-gat
 
 ```sh
 cd ~/Projects/nr-log-sender
-sudo k3s kubectl apply -k .
-sudo k3s kubectl -n nr-log-sender rollout status deploy/nr-log-sender
+./deploy.sh                                                       # apply -k + payloads configmap
 sudo k3s kubectl -n nr-log-sender logs -f deploy/nr-log-sender    # watch http=200
 ```
 
-Change the cadence via `INTERVAL` in `k8s/deployment.yaml`; change the payload in
-`otlp-log.json`. Re-run `apply -k .` — the config hash change triggers a rolling
-restart automatically (then delete the orphaned old ConfigMap).
+## Add a payload
+Drop a new `.json` file in `payloads/` and re-run `./deploy.sh`.
+No manifest edits, no restart: the kubelet syncs the mounted
+configmap in place (≤ ~1 min) and the script re-globs the directory every
+sweep, so the new payload just starts flowing.
+
+Change the cadence via `INTERVAL` in `k8s/deployment.yaml`; change the envelope
+in `otlp-log.json`. For script/envelope changes re-run `./deploy.sh` — the
+config hash change triggers a rolling restart automatically (then delete the
+orphaned old ConfigMap).
 
 ## Verify in New Relic
 ```sql

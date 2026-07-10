@@ -7,8 +7,10 @@ resources:
   - k8s/namespace.yaml
   - k8s/deployment.yaml
 
-# ConfigMap is generated straight from the real script + payload — single source
+# ConfigMap is generated straight from the real script + template — single source
 # of truth. The name hash suffix makes `apply -k` roll the pod on any change.
+# The payloads/ configmap is NOT here: kustomize can't glob a directory, so it's
+# built with `kubectl create configmap --from-file=payloads/` (see README).
 configMapGenerator:
   - name: nr-log-sender-script
     files:

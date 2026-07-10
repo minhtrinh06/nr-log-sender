@@ -1,0 +1,15 @@
+{
+  "applicationname": "fnl-sbs-cards-experience",
+  "custom": "{}",
+  "hostname": "ip-10-224-0-123",
+  "logger": "org.mule.extension.jsonlogger.JsonLogger",
+  "logtype": "muleLog",
+  "message": "{\"correlationId\":\"dfa21740-7b53-11f1-b261-hfreuh73\",\"message\":\"INBOUND REQUEST\",\"tracePoint\":\"START\",\"priority\":\"INFO\",\"elapsed\":0,\"timestamp\":\"2026-07-09T05:05:59.094Z[UTC]\",\"content\":\"<?xml version='1.0' encoding='UTF-8'?>\\n<soap:Envelope xmlns:soap=\\\"http://schemas.xmlsoap.org/soap/envelope/\\\">\\n  <soap:Body>\\n    <ns0:getCreditCardAccountDetails xmlns:ns0=\\\"http://www.sandstone.com.au/ib/host/201405/\\\">\\n      <ns0:requestId>4h4h44-hhheeh-hdhhdhd-hdhd77-7d7h7dd77</ns0:requestId>\\n      <ns0:channel>PFirst</ns0:channel>\\n      <ns0:accountNumber>SB00000</ns0:accountNumber>\\n      <ns0:customerNumber>1111</ns0:customerNumber>\\n      <ns0:entityNumber>1111</ns0:entityNumber>\\n      <ns0:entityType>P</ns0:entityType>\\n    </ns0:getCreditCardAccountDetails>\\n  </soap:Body>\\n</soap:Envelope>\",\"applicationName\":\"fnl-sbs-cards-experience\",\"applicationVersion\":\"4.1.26188.1019\",\"environment\":\"Production\",\"threadName\":\"[MuleRuntime].uber.6641: [fnl-sbs-cards-experience].Request.BLOCKING @7eddcca7\"}",
+  "name": "fnl-sbs-cards-experience",
+  "newrelic.source": "api.logs",
+  "properties": "{\"correlationId\":\"hf7d7d-7b53-11f1-b261-lang73ff\",\"processorPath\":\"Request/processors/2\"}",
+  "severity": "INFO",
+  "source": "NRBatchingAppender",
+  "timestamp": 1783573558511,
+  "version": "1.1.12"
+}

@@ -11,9 +11,7 @@
             {
               "timeUnixNano": "1783492434407676000",
               "severityText": "DEBUG",
-              "body": {
-                "stringValue": "2026-07-08 13:46:27.3404 DEBUG RESPONSE:: Id: XXXXX-CCCCC-RRRRR-YYYY-HHHHH8-0000-4444-8888888, Status: OK, Body: {\\\"ProductName\\\":\\\"SBS Visa Credit Card\\\",\\\"SubProductName\\\":\\\"SBS Visa Credit Card\\\",\\\"ProductNumber\\\":\\\"300\\\",\\\"AccountTypeDescription\\\":\\\"SBS Credit account\\\",\\\"CreditLimit\\\":5000.00000000,\\\"Balance\\\":1000.00000000000,\\\"LastStatementDate\\\":\\\"2026-06-14\\\",\\\"MinimumPayment\\\":43.75000000,\\\"TotalAmountDue\\\":1617.64000000,\\\"PaymentDueDattStatusDescription\\\":\\\"ACTIVE\\\",\\\"CloseDate\\\":null,\\\"CurrentInterestRates\\\":{\\\"Purchase\\\":19.0000,\\\"Cash\\\":22.6500},\\\"Customer\\\":[{\\\"Name\\\":\\\"John Smith\\\",\\\"CustomerNumber\\\":\\\"111\\\"}],\\\"LoyaltyAccounts\\\":[]}"
-              },
+              "body": "__BODY__",
               "attributes": []
             }
           ]
